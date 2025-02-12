@@ -13,8 +13,13 @@ def set_img_as_wallpaper(filepath):
     ctypes.windll.user32.SystemParametersInfoW()
 
 #获取网址的最大值
-def get_pictures_nums(url,headers):
-    req = requests.get(url=url,headers=headers)
+def get_pictures_nums(url,headers,cookies):
+    try:
+        req = requests.get(url=url,headers=headers,cookies=cookies)
+    except AttributeError:
+        print("AttributeError is a problem!")
+    except Exception as e:
+        print("OtherError!")
     print(req.status_code)
     req.encoding = "gbk"
     html = req.text
@@ -106,8 +111,18 @@ def get_pictures_all(list_htmls,headers):
 #主函数
 def main():
     url = "http://www.netbian.com/dongman/"
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"}
-    nums = get_pictures_nums(url,headers)       #获取最大壁纸网站的值
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
+        "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Accept-encoding":"gzip, deflate",
+        "Accept-language":"zh-CN,zh;q=0.9,en;q=0.8",
+        "Cache-control":"max-age=0",
+        "Connection":"keep-alive"
+        }
+    cookies = {
+        "Cookie":"trenvecookieclassrecord=%2C19%2C; cf_clearance=bqtJUwdFcCiOTTDumKVK1ZkaHPmiK1xC8wErND38V1g-1739327100-1.2.1.1-CrJYPiIPvfqYeIpzuiazAFlqksI1rvFUrbOzlmY3GTSFNnV4dWkxwUMXd3wlcUuvK1do3p0.ev2i3MWjF6poIzVCcdACiHwKPkqO408vutIz5HlKqTyb8vlG6kQ9820hDgVqWgqQ4FMaVJRQEHBTyseqsnnky2.JC8CfzjWoYkkttwVh1qYxsZDgKeNk48Mv.W3lH_EvMBGQ7PZSxNBf8QSo.H0DOuXdBTkUJ21WWjLQQM77DC_pP1yz8A6jyXueE0XarYFrxsjh_NyKNHlfrp3Spv8lvhoIoOx8VCWaVjtQ5hQHnYM0lWY.viwC0pdWAZB1c2h0_kp0vQ7lW6fmzA"
+    }
+    nums = get_pictures_nums(url,headers,cookies)       #获取最大壁纸网站的值
     list_htmls = get_pictures_html(url,nums)    #获取所有壁纸网址的统一资源定位符url
     while(1):
         get_pictures_all(list_htmls,headers)        #获取某一网址的所有壁纸
